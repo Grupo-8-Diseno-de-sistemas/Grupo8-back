@@ -1,0 +1,139 @@
+package com.grupo8.ppaibolsines.Documentacion.Data.Model;
+
+import com.grupo8.ppaibolsines.CambioEstadoDocumentacion.Data.Model.CambioEstadoDocumentacion;
+import com.grupo8.ppaibolsines.Empleado.Data.Model.Empleado;
+import com.grupo8.ppaibolsines.Estado.Data.Model.Estado;
+import com.grupo8.ppaibolsines.TipoDocumento.Data.Model.TipoDocumento;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "documentacion")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Documentacion {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String asunto;
+    private LocalDate fechaPase;
+    private String numero;
+
+    @ManyToOne
+    private TipoDocumento tipoDocumento;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "documentacion_id")
+    private List<CambioEstadoDocumentacion> cambiosEstadoDocumentacion = new ArrayList<>();
+
+    public Documentacion(String asunto, LocalDate fechaPase, String numero, TipoDocumento tipoDocumento) {
+        this.asunto = asunto;
+        this.fechaPase = fechaPase;
+        this.numero = numero;
+        this.tipoDocumento = tipoDocumento;
+    }
+
+    public void remitar(Estado estado) {
+        asignarEstado(estado, null);
+    }
+
+    public void cancelar(Estado estado) {
+        asignarEstado(estado, null);
+    }
+
+    public void darDeBaja(Estado estado) {
+        asignarEstado(estado, null);
+    }
+
+    public void enBolsinSaliente(Estado estado) {
+        asignarEstado(estado, null);
+    }
+
+    public void quitarDeBolsin(Estado estado, boolean seQuitaDocumentacion) {
+        if (seQuitaDocumentacion) {
+            asignarEstado(estado, null);
+        }
+    }
+
+    public void enviarBolsin(Estado estado) {
+        asignarEstado(estado, null);
+    }
+
+    public void rechazar(Estado estado, Empleado empleadoResponsable) {
+        asignarEstado(estado, empleadoResponsable);
+    }
+
+    public void redirigirDocumentacion(Estado estado, Empleado empleadoResponsable) {
+        asignarEstado(estado, empleadoResponsable);
+    }
+
+    public void aceptar(Estado estado, Empleado empleadoResponsable) {
+        asignarEstado(estado, empleadoResponsable);
+    }
+
+    public void noRecibir(Estado estado, Empleado empleadoResponsable) {
+        asignarEstado(estado, empleadoResponsable);
+    }
+
+    public void reenvioDocumentacion(Estado estado, Empleado empleadoResponsable) {
+        asignarEstado(estado, empleadoResponsable);
+    }
+
+    public void crearCE(Estado estado, Empleado empleadoResponsable) {
+        CambioEstadoDocumentacion cambioEstado = new CambioEstadoDocumentacion(LocalDateTime.now(), estado, empleadoResponsable);
+        this.cambiosEstadoDocumentacion.add(cambioEstado);
+    }
+
+    public String getDatosDocumentacion() {
+        return this.numero + " - " + this.asunto;
+    }
+
+    public String mostrarTipoDocumentacion() {
+        return this.tipoDocumento != null ? this.tipoDocumento.getNombre() : null;
+    }
+
+    public void setEstado(Estado estado) {
+        CambioEstadoDocumentacion actual = buscarCambioEstadoActual();
+        if (actual != null) {
+            actual.setEstado(estado);
+        }
+    }
+
+    public void asignarEstado(Estado estado, Empleado empleadoResponsable) {
+        CambioEstadoDocumentacion actual = buscarCambioEstadoActual();
+        if (actual != null) {
+            actual.setFechaHoraFin(LocalDateTime.now());
+        }
+        crearCE(estado, empleadoResponsable);
+    }
+
+    public Estado getEstadoActual() {
+        CambioEstadoDocumentacion actual = buscarCambioEstadoActual();
+        return actual != null ? actual.getEstado() : null;
+    }
+
+    private CambioEstadoDocumentacion buscarCambioEstadoActual() {
+        return this.cambiosEstadoDocumentacion.stream()
+                .filter(CambioEstadoDocumentacion::sosActual)
+                .findFirst()
+                .orElse(null);
+    }
+}
