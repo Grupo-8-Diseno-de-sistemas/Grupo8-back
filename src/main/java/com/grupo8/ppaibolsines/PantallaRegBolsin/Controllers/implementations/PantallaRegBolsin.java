@@ -7,13 +7,13 @@ import com.grupo8.ppaibolsines.Bolsin.Mappers.BolsinMapper;
 import com.grupo8.ppaibolsines.Bolsin.Service.interfaces.IBolsinService;
 import com.grupo8.ppaibolsines.ComisionMedica.Data.Model.ComisionMedica;
 import com.grupo8.ppaibolsines.ComisionMedica.Service.interfaces.IComisionMedicaService;
-import com.grupo8.ppaibolsines.Empleado.Data.Model.Empleado;
-import com.grupo8.ppaibolsines.Empleado.Service.interfaces.IEmpleadoService;
 import com.grupo8.ppaibolsines.Estado.Service.interfaces.IEstadoService;
 import com.grupo8.ppaibolsines.GestorRegBolsin.Service.implementations.GestorRegBolsin;
 import com.grupo8.ppaibolsines.PantallaRegBolsin.Controllers.interfaces.IPantallaRegBolsin;
 import com.grupo8.ppaibolsines.PantallaRegBolsin.Controllers.request.RegistrarRecepcionRequest;
 import com.grupo8.ppaibolsines.PantallaRegBolsin.Controllers.response.RecepcionResponse;
+import com.grupo8.ppaibolsines.Sesion.Data.Model.Sesion;
+import com.grupo8.ppaibolsines.Sesion.Service.interfaces.ISesionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,18 +32,18 @@ public class PantallaRegBolsin implements IPantallaRegBolsin {
 
     private final IBolsinService bolsinService;
     private final IEstadoService estadoService;
-    private final IEmpleadoService empleadoService;
+    private final ISesionService sesionService;
     private final IComisionMedicaService comisionMedicaService;
     private final BolsinMapper bolsinMapper;
 
     @Autowired
     public PantallaRegBolsin(IBolsinService bolsinService,
                               IEstadoService estadoService,
-                              IEmpleadoService empleadoService,
+                              ISesionService sesionService,
                               IComisionMedicaService comisionMedicaService) {
         this.bolsinService = bolsinService;
         this.estadoService = estadoService;
-        this.empleadoService = empleadoService;
+        this.sesionService = sesionService;
         this.comisionMedicaService = comisionMedicaService;
         this.bolsinMapper = new BolsinMapper();
     }
@@ -83,10 +83,10 @@ public class PantallaRegBolsin implements IPantallaRegBolsin {
                     "La opción " + request.opcion() + " no está implementada en esta iteración del CU (solo opción 1)");
         }
 
-        Empleado empleadoLogueado = empleadoService.buscarPorId(request.empleadoId());
+        Sesion sesion = sesionService.buscarPorId(request.sesionId());
 
         GestorRegBolsin gestorRegBolsin = new GestorRegBolsin(bolsinService, estadoService);
-        gestorRegBolsin.buscarCMDeUsuarioLogueado(empleadoLogueado);
+        gestorRegBolsin.buscarCMDeUsuarioLogueado(sesion);
         Bolsin bolsin = gestorRegBolsin.tomarSeleccionBolsin(id);
         gestorRegBolsin.buscarRemitoBolsin();
         gestorRegBolsin.tomarSeleccionOpcRecepcion(request.opcion());

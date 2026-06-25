@@ -8,6 +8,8 @@ import com.grupo8.ppaibolsines.Estado.Data.Model.Estado;
 import com.grupo8.ppaibolsines.Estado.Service.interfaces.IEstadoService;
 import com.grupo8.ppaibolsines.GestorRegBolsin.Service.interfaces.IGestorRegBolsin;
 import com.grupo8.ppaibolsines.Remito.Data.Model.Remito;
+import com.grupo8.ppaibolsines.Sesion.Data.Model.Sesion;
+import com.grupo8.ppaibolsines.Usuario.Data.Model.Usuario;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,15 +32,16 @@ public class GestorRegBolsin implements IGestorRegBolsin {
     }
 
     @Override
-    public List<Bolsin> registrarRecepcionBolsin(Empleado empleadoLogueado, String numeroPrecinto, ComisionMedica cmOrigen) {
-        buscarCMDeUsuarioLogueado(empleadoLogueado);
+    public List<Bolsin> registrarRecepcionBolsin(Sesion sesion, String numeroPrecinto, ComisionMedica cmOrigen) {
+        buscarCMDeUsuarioLogueado(sesion);
         return buscarBolsinesConEstadoEnviado(this.cmDeEmpleadoLogueado, numeroPrecinto, cmOrigen);
     }
 
     @Override
-    public ComisionMedica buscarCMDeUsuarioLogueado(Empleado empleadoLogueado) {
-        this.empleadoLogueado = empleadoLogueado;
-        this.cmDeEmpleadoLogueado = empleadoLogueado.getCM();
+    public ComisionMedica buscarCMDeUsuarioLogueado(Sesion sesion) {
+        Usuario usuario = sesion.obtenerUsuarioLogueado();
+        this.empleadoLogueado = usuario.obtenerEmpleadoLogueado();
+        this.cmDeEmpleadoLogueado = this.empleadoLogueado.getCM();
         return this.cmDeEmpleadoLogueado;
     }
 
