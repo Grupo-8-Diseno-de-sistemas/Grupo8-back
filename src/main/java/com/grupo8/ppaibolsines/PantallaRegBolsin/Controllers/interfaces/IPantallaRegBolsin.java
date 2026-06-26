@@ -12,5 +12,7 @@ public interface IPantallaRegBolsin {
 
     ResponseEntity<List<BolsinResponse>> listarBolsinesEnviados(Long sesionId, String nroPrecinto, Long cmOrigenId);
 
+    ResponseEntity<BolsinDetalleResponse> obtenerDetalleBolsin(Long id);
+
     ResponseEntity<RecepcionResponse> registrarRecepcionBolsin(Long idBolsin, RegistrarRecepcionRequest request);
 }

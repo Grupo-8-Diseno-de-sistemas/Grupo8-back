@@ -120,11 +120,27 @@ public class GestorRegBolsin implements IGestorRegBolsin {
         this.fechaHoraActual = buscarFechaYHoraActual();
         asignarEstadoBolsin(estadoBolsin);
 
-        Estado estadoRemito = buscarEstadoParaAsignarRemito();
-        asignarEstadoRemito(estadoRemito);
-
-        Estado estadoDocumentacion = buscarEstadoParaAsignarDocumentacion();
-        asignarEstadoDocumentacion(estadoDocumentacion);
+        if (this.seleccionadaOpcionRecepcion == 1) {
+            Estado estadoRemito = buscarEstadoParaAsignarRemito();
+            asignarEstadoRemito(estadoRemito);
+            Estado estadoDoc = buscarEstadoParaAsignarDocumentacion();
+            asignarEstadoDocumentacion(estadoDoc);
+        } else if (this.seleccionadaOpcionRecepcion == 2) {
+            Estado estadoRemito = buscarEstadoParaAsignarRemitoParcial();
+            asignarEstadoRemito(estadoRemito);
+            Estado estadoDoc = buscarEstadoParaAsignarDocNoRecibida();
+            asignarEstadoDocumentacion(estadoDoc);
+        } else if (this.seleccionadaOpcionRecepcion == 3) {
+            Estado estadoRemito = buscarEstadoParaAsignarRemitoParcial();
+            asignarEstadoRemito(estadoRemito);
+            Estado estadoDoc = buscarEstadoParaAsignarDocRechazada();
+            asignarEstadoDocumentacion(estadoDoc);
+        } else if (this.seleccionadaOpcionRecepcion == 4) {
+            Estado estadoRemito = buscarEstadoParaAsignarRemitoParcial();
+            asignarEstadoRemito(estadoRemito);
+            Estado estadoDoc = buscarEstadoParaAsignarDocParaRedirigir();
+            asignarEstadoDocumentacion(estadoDoc);
+        }
     }
 
     @Override
@@ -163,6 +179,16 @@ public class GestorRegBolsin implements IGestorRegBolsin {
     }
 
     @Override
+    public Estado buscarEstadoParaAsignarRemitoParcial() {
+        for (Estado estado : estadoService.buscarTodos()) {
+            if (estado.esAmbitoRemito() && estado.esRecibidoYAceptadoParcial()) {
+                return estado;
+            }
+        }
+        throw new IllegalStateException("No existe un Estado de ámbito Remito para Recibido y Aceptado Parcial");
+    }
+
+    @Override
     public Estado buscarEstadoParaAsignarDocumentacion() {
         for (Estado estado : estadoService.buscarTodos()) {
             if (estado.esAmbitoDocumentacion() && estado.esRecibidaYAceptada()) {
@@ -170,6 +196,36 @@ public class GestorRegBolsin implements IGestorRegBolsin {
             }
         }
         throw new IllegalStateException("No existe un Estado de ámbito Documentacion para Recibida y Aceptada");
+    }
+
+    @Override
+    public Estado buscarEstadoParaAsignarDocNoRecibida() {
+        for (Estado estado : estadoService.buscarTodos()) {
+            if (estado.esAmbitoDocumentacion() && estado.esNoRecibida()) {
+                return estado;
+            }
+        }
+        throw new IllegalStateException("No existe un Estado de ámbito Documentacion para No Recibida");
+    }
+
+    @Override
+    public Estado buscarEstadoParaAsignarDocRechazada() {
+        for (Estado estado : estadoService.buscarTodos()) {
+            if (estado.esAmbitoDocumentacion() && estado.esRecibidaYRechazada()) {
+                return estado;
+            }
+        }
+        throw new IllegalStateException("No existe un Estado de ámbito Documentacion para Recibida y Rechazada");
+    }
+
+    @Override
+    public Estado buscarEstadoParaAsignarDocParaRedirigir() {
+        for (Estado estado : estadoService.buscarTodos()) {
+            if (estado.esAmbitoDocumentacion() && estado.esParaRedirigir()) {
+                return estado;
+            }
+        }
+        throw new IllegalStateException("No existe un Estado de ámbito Documentacion para Para Redirigir");
     }
 
     @Override

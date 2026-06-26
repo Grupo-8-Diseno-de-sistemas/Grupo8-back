@@ -1,5 +1,6 @@
 package com.grupo8.ppaibolsines.PantallaRegBolsin.Controllers.implementations;
 
+import com.grupo8.ppaibolsines.Bolsin.Controllers.response.BolsinDetalleResponse;
 import com.grupo8.ppaibolsines.Bolsin.Controllers.response.BolsinResponse;
 import com.grupo8.ppaibolsines.Bolsin.Data.Model.Bolsin;
 import com.grupo8.ppaibolsines.Bolsin.Mappers.BolsinMapper;
@@ -72,14 +73,16 @@ public class PantallaRegBolsin implements IPantallaRegBolsin {
     }
 
     @Override
+    @GetMapping("/{id}")
+    public ResponseEntity<BolsinDetalleResponse> obtenerDetalleBolsin(@PathVariable Long id) {
+        Bolsin bolsin = bolsinService.buscarPorId(id);
+        return ResponseEntity.ok(bolsinMapper.toDetalleResponse(bolsin));
+    }
+
+    @Override
     @PutMapping("/{id}/recepcion")
     public ResponseEntity<RecepcionResponse> registrarRecepcionBolsin(@PathVariable Long id,
                                                                         @RequestBody RegistrarRecepcionRequest request) {
-        if (request.opcion() != 1) {
-            throw new IllegalStateException(
-                    "La opción " + request.opcion() + " no está implementada en esta iteración del CU (solo opción 1)");
-        }
-
         Sesion sesion = sesionService.buscarPorId(request.sesionId());
 
         GestorRegBolsin gestorRegBolsin = new GestorRegBolsin(bolsinService, estadoService);

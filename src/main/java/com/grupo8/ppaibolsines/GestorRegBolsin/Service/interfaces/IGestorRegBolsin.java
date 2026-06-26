@@ -39,9 +39,17 @@ public interface IGestorRegBolsin {
 
     Estado buscarEstadoParaAsignarRemito();
 
+    Estado buscarEstadoParaAsignarRemitoParcial();
+
     void asignarEstadoRemito(Estado estado);
 
     Estado buscarEstadoParaAsignarDocumentacion();
+
+    Estado buscarEstadoParaAsignarDocNoRecibida();
+
+    Estado buscarEstadoParaAsignarDocRechazada();
+
+    Estado buscarEstadoParaAsignarDocParaRedirigir();
 
     void asignarEstadoDocumentacion(Estado estado);
 

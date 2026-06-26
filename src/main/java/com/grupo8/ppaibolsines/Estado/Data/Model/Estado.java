@@ -58,6 +58,22 @@ public class Estado {
         return "Recibida y Aceptada".equalsIgnoreCase(this.nombre);
     }
 
+    public boolean esNoRecibida() {
+        return "No Recibida".equalsIgnoreCase(this.nombre);
+    }
+
+    public boolean esRecibidoYAceptadoParcial() {
+        return "Recibido y Aceptado Parcial".equalsIgnoreCase(this.nombre);
+    }
+
+    public boolean esRecibidaYRechazada() {
+        return "Recibida y Rechazada".equalsIgnoreCase(this.nombre);
+    }
+
+    public boolean esParaRedirigir() {
+        return "Para Redirigir".equalsIgnoreCase(this.nombre);
+    }
+
     public void serAmbito(String ambito) {
         this.ambito = ambito;
     }
