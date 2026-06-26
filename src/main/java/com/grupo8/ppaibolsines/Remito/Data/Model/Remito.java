@@ -58,6 +58,12 @@ public class Remito {
                 .toList();
     }
 
+    public void buscarDocumentacion() {
+        for (DetalleRemito dr : this.detalleRemitos) {
+            dr.getDocumentacion();
+        }
+    }
+
     public boolean estasGenerado() {
         return this.estado != null;
     }

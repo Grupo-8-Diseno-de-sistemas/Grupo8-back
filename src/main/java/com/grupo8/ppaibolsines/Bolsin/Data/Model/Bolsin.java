@@ -68,8 +68,8 @@ public class Bolsin {
         this.cambiosEstadoBolsin.add(cambioEstado);
     }
 
-    public ComisionMedica obtenerCMOrigen() {
-        return this.cmOrigen;
+    public String obtenerCMOrigen() {
+        return this.cmOrigen.getNombre();
     }
 
     public boolean esTuCMOrigen(ComisionMedica comisionMedica) {
@@ -90,6 +90,10 @@ public class Bolsin {
     }
 
     public List<Remito> obtenerInformacionRemito() {
+        for (Remito remito : this.remitos) {
+            remito.getNumero();
+            remito.buscarDocumentacion();
+        }
         return this.remitos;
     }
 
@@ -98,21 +102,17 @@ public class Bolsin {
     }
 
     public boolean sosEnviado() {
-        Estado estadoActual = getEstadoActual();
-        return estadoActual != null && estadoActual.esEnviado();
+        for (CambioEstadoBolsin ce : this.cambiosEstadoBolsin) {
+            if (ce.sosEnviado()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void asignarEstado(Estado estado, Empleado empleadoResponsable) {
-        CambioEstadoBolsin actual = buscarCambioEstadoActual();
-        if (actual != null) {
-            actual.setFechaHoraFin(LocalDateTime.now());
-        }
+        getEstadoActual();
         crearCEBolsin(estado, empleadoResponsable);
-    }
-
-    public Estado getEstadoActual() {
-        CambioEstadoBolsin actual = buscarCambioEstadoActual();
-        return actual != null ? actual.getEstado() : null;
     }
 
     public void asignarEstadoARemito(Estado estado) {
@@ -132,10 +132,14 @@ public class Bolsin {
                 && this.cmDestino.getId().equals(comisionMedica.getId());
     }
 
-    private CambioEstadoBolsin buscarCambioEstadoActual() {
-        return this.cambiosEstadoBolsin.stream()
+    public CambioEstadoBolsin getEstadoActual() {
+        CambioEstadoBolsin actual = this.cambiosEstadoBolsin.stream()
                 .filter(CambioEstadoBolsin::sosActual)
                 .findFirst()
                 .orElse(null);
+        if (actual != null) {
+            actual.setFechaHoraFin(LocalDateTime.now());
+        }
+        return actual;
     }
 }

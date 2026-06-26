@@ -7,4 +7,6 @@ import java.util.List;
 public interface IEstadoService {
 
     List<Estado> buscarPorAmbito(String ambito);
+
+    List<Estado> buscarTodos();
 }

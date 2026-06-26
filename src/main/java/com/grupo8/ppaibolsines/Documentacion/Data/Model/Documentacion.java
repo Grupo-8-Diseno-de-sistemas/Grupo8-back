@@ -111,29 +111,25 @@ public class Documentacion {
     }
 
     public void setEstado(Estado estado) {
-        CambioEstadoDocumentacion actual = buscarCambioEstadoActual();
-        if (actual != null) {
-            actual.setEstado(estado);
-        }
+        this.cambiosEstadoDocumentacion.stream()
+                .filter(CambioEstadoDocumentacion::sosActual)
+                .findFirst()
+                .ifPresent(actual -> actual.setEstado(estado));
     }
 
     public void asignarEstado(Estado estado, Empleado empleadoResponsable) {
-        CambioEstadoDocumentacion actual = buscarCambioEstadoActual();
-        if (actual != null) {
-            actual.setFechaHoraFin(LocalDateTime.now());
-        }
+        getEstadoActual();
         crearCE(estado, empleadoResponsable);
     }
 
-    public Estado getEstadoActual() {
-        CambioEstadoDocumentacion actual = buscarCambioEstadoActual();
-        return actual != null ? actual.getEstado() : null;
-    }
-
-    private CambioEstadoDocumentacion buscarCambioEstadoActual() {
-        return this.cambiosEstadoDocumentacion.stream()
+    public CambioEstadoDocumentacion getEstadoActual() {
+        CambioEstadoDocumentacion actual = this.cambiosEstadoDocumentacion.stream()
                 .filter(CambioEstadoDocumentacion::sosActual)
                 .findFirst()
                 .orElse(null);
+        if (actual != null) {
+            actual.setFechaHoraFin(LocalDateTime.now());
+        }
+        return actual;
     }
 }

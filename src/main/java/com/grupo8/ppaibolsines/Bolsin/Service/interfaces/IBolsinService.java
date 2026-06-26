@@ -9,6 +9,8 @@ public interface IBolsinService {
 
     List<Bolsin> buscarConEstadoEnviado(ComisionMedica cmDestino, String numeroPrecinto, ComisionMedica cmOrigen);
 
+    List<Bolsin> buscarTodos();
+
     Bolsin buscarPorId(Long id);
 
     Bolsin guardar(Bolsin bolsin);

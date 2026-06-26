@@ -10,9 +10,7 @@ import java.util.List;
 
 public interface IPantallaRegBolsin {
 
-    ResponseEntity<List<BolsinResponse>> listarBolsinesEnviados(Long cmDestinoId, String precinto, Long cmOrigenId);
-
-    ResponseEntity<BolsinDetalleResponse> obtenerDetalleBolsin(Long idBolsin);
+    ResponseEntity<List<BolsinResponse>> listarBolsinesEnviados(Long sesionId);
 
     ResponseEntity<RecepcionResponse> registrarRecepcionBolsin(Long idBolsin, RegistrarRecepcionRequest request);
 }

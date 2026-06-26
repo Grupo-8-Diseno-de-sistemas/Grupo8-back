@@ -22,4 +22,9 @@ public class EstadoService implements IEstadoService {
     public List<Estado> buscarPorAmbito(String ambito) {
         return estadoRepository.findByAmbito(ambito);
     }
+
+    @Override
+    public List<Estado> buscarTodos() {
+        return estadoRepository.findAll();
+    }
 }

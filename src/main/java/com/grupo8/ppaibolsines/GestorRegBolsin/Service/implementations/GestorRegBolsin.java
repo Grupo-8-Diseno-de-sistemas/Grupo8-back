@@ -12,6 +12,7 @@ import com.grupo8.ppaibolsines.Sesion.Data.Model.Sesion;
 import com.grupo8.ppaibolsines.Usuario.Data.Model.Usuario;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GestorRegBolsin implements IGestorRegBolsin {
@@ -32,9 +33,9 @@ public class GestorRegBolsin implements IGestorRegBolsin {
     }
 
     @Override
-    public List<Bolsin> registrarRecepcionBolsin(Sesion sesion, String numeroPrecinto, ComisionMedica cmOrigen) {
+    public List<Bolsin> registrarRecepcionBolsin(Sesion sesion) {
         buscarCMDeUsuarioLogueado(sesion);
-        return buscarBolsinesConEstadoEnviado(this.cmDeEmpleadoLogueado, numeroPrecinto, cmOrigen);
+        return buscarBolsinesConEstadoEnviado();
     }
 
     @Override
@@ -42,18 +43,34 @@ public class GestorRegBolsin implements IGestorRegBolsin {
         Usuario usuario = sesion.obtenerUsuarioLogueado();
         this.empleadoLogueado = usuario.obtenerEmpleadoLogueado();
         this.cmDeEmpleadoLogueado = this.empleadoLogueado.getCM();
+        this.empleadoLogueado.esTuCM(this.cmDeEmpleadoLogueado);
         return this.cmDeEmpleadoLogueado;
     }
 
     @Override
-    public List<Bolsin> buscarBolsinesConEstadoEnviado(ComisionMedica cmDestino, String numeroPrecinto, ComisionMedica cmOrigen) {
-        this.listBolsinesEnviados = bolsinService.buscarConEstadoEnviado(cmDestino, numeroPrecinto, cmOrigen);
+    public List<Bolsin> buscarBolsinesConEstadoEnviado() {
+        List<Bolsin> todosBolsines = buscar();
+        this.listBolsinesEnviados = new ArrayList<>();
+        for (Bolsin bolsin : todosBolsines) {
+            if (bolsin.esTuCMDestino(this.cmDeEmpleadoLogueado) && bolsin.sosEnviado()) {
+                bolsin.obtenerCMOrigen();
+                bolsin.getNroPrecinto();
+                this.listBolsinesEnviados.add(bolsin);
+            }
+        }
         return this.listBolsinesEnviados;
+    }
+
+    private List<Bolsin> buscar() {
+        return bolsinService.buscarTodos();
     }
 
     @Override
     public Bolsin tomarSeleccionBolsin(Long idBolsin) {
-        this.seleccionadoBolsin = bolsinService.buscarPorId(idBolsin);
+        this.seleccionadoBolsin = this.listBolsinesEnviados.stream()
+                .filter(b -> b.getId().equals(idBolsin))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Bolsín no encontrado en la lista"));
         return this.seleccionadoBolsin;
     }
 
@@ -90,10 +107,12 @@ public class GestorRegBolsin implements IGestorRegBolsin {
 
     @Override
     public Estado buscarEstadoParaAsignarBolsin() {
-        return estadoService.buscarPorAmbito("Bolsin").stream()
-                .filter(Estado::esRecibidoEnCMDestino)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No existe un Estado de ámbito Bolsin para Recibido en CM Destino"));
+        for (Estado estado : estadoService.buscarTodos()) {
+            if (estado.esAmbitoBolsin() && estado.esRecibidoEnCMDestino()) {
+                return estado;
+            }
+        }
+        throw new IllegalStateException("No existe un Estado de ámbito Bolsin para Recibido en CM Destino");
     }
 
     @Override
@@ -108,10 +127,12 @@ public class GestorRegBolsin implements IGestorRegBolsin {
 
     @Override
     public Estado buscarEstadoParaAsignarRemito() {
-        return estadoService.buscarPorAmbito("Remito").stream()
-                .filter(Estado::esRecibidoYAceptado)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No existe un Estado de ámbito Remito para Recibido y Aceptado"));
+        for (Estado estado : estadoService.buscarTodos()) {
+            if (estado.esAmbitoRemito() && estado.esRecibidoYAceptado()) {
+                return estado;
+            }
+        }
+        throw new IllegalStateException("No existe un Estado de ámbito Remito para Recibido y Aceptado");
     }
 
     @Override
@@ -121,10 +142,12 @@ public class GestorRegBolsin implements IGestorRegBolsin {
 
     @Override
     public Estado buscarEstadoParaAsignarDocumentacion() {
-        return estadoService.buscarPorAmbito("Documentacion").stream()
-                .filter(Estado::esRecibidaYAceptada)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No existe un Estado de ámbito Documentacion para Recibida y Aceptada"));
+        for (Estado estado : estadoService.buscarTodos()) {
+            if (estado.esAmbitoDocumentacion() && estado.esRecibidaYAceptada()) {
+                return estado;
+            }
+        }
+        throw new IllegalStateException("No existe un Estado de ámbito Documentacion para Recibida y Aceptada");
     }
 
     @Override

@@ -28,7 +28,7 @@ public class BolsinMapper {
                 bolsin.getPeso(),
                 cmOrigen,
                 cmDestino,
-                bolsin.getEstadoActual() != null ? bolsin.getEstadoActual().getNombre() : null
+                bolsin.getEstadoActual() != null ? bolsin.getEstadoActual().getEstado().getNombre() : null
         );
     }
 
@@ -43,7 +43,7 @@ public class BolsinMapper {
                 bolsin.getPeso(),
                 cmOrigen,
                 cmDestino,
-                bolsin.getEstadoActual() != null ? bolsin.getEstadoActual().getNombre() : null,
+                bolsin.getEstadoActual() != null ? bolsin.getEstadoActual().getEstado().getNombre() : null,
                 bolsin.obtenerInformacionRemito().stream().map(remitoMapper::toResponse).toList(),
                 bolsin.getCambiosEstadoBolsin().stream().map(cambioEstadoBolsinMapper::toResponse).toList()
         );

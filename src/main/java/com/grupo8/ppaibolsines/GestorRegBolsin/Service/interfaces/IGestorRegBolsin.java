@@ -11,11 +11,11 @@ import java.util.List;
 
 public interface IGestorRegBolsin {
 
-    List<Bolsin> registrarRecepcionBolsin(Sesion sesion, String numeroPrecinto, ComisionMedica cmOrigen);
+    List<Bolsin> registrarRecepcionBolsin(Sesion sesion);
 
     ComisionMedica buscarCMDeUsuarioLogueado(Sesion sesion);
 
-    List<Bolsin> buscarBolsinesConEstadoEnviado(ComisionMedica cmDestino, String numeroPrecinto, ComisionMedica cmOrigen);
+    List<Bolsin> buscarBolsinesConEstadoEnviado();
 
     Bolsin tomarSeleccionBolsin(Long idBolsin);
 

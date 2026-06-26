@@ -45,6 +45,6 @@ public class CambioEstadoBolsin {
     }
 
     public boolean sosEnviado() {
-        return this.estado != null && this.estado.esEnviado();
+        return this.sosActual() && this.estado.esEnviado();
     }
 }

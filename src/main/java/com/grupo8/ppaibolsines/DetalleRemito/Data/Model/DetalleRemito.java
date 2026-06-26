@@ -44,6 +44,12 @@ public class DetalleRemito {
         this.documentacion.asignarEstado(estado, empleadoResponsable);
     }
 
+    public Documentacion getDocumentacion() {
+        this.documentacion.getAsunto();
+        this.documentacion.mostrarTipoDocumentacion();
+        return this.documentacion;
+    }
+
     public String mostrarDocumentacion() {
         return this.documentacion.getDatosDocumentacion();
     }

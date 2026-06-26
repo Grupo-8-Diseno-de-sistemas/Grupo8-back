@@ -30,6 +30,11 @@ public class BolsinService implements IBolsinService {
     }
 
     @Override
+    public List<Bolsin> buscarTodos() {
+        return bolsinRepository.findAll();
+    }
+
+    @Override
     public Bolsin buscarPorId(Long id) {
         return bolsinRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No existe el bolsín con id " + id));
