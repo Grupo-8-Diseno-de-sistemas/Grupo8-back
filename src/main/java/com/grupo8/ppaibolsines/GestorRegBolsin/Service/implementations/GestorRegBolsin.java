@@ -66,6 +66,28 @@ public class GestorRegBolsin implements IGestorRegBolsin {
     }
 
     @Override
+    public List<Bolsin> filtrarPorNroPrecinto(String nroPrecinto) {
+        List<Bolsin> resultado = this.listBolsinesEnviados.stream()
+                .filter(b -> b.getNroPrecinto().equalsIgnoreCase(nroPrecinto))
+                .toList();
+        if (resultado.isEmpty()) {
+            throw new IllegalArgumentException("No se encontró bolsín con número de precinto: " + nroPrecinto);
+        }
+        return resultado;
+    }
+
+    @Override
+    public List<Bolsin> filtrarPorCmOrigen(Long cmOrigenId) {
+        List<Bolsin> resultado = this.listBolsinesEnviados.stream()
+                .filter(b -> b.esTuCMOrigenId(cmOrigenId))
+                .toList();
+        if (resultado.isEmpty()) {
+            throw new IllegalArgumentException("No se encontró bolsín con la CM de origen ingresada.");
+        }
+        return resultado;
+    }
+
+    @Override
     public Bolsin tomarSeleccionBolsin(Long idBolsin) {
         this.seleccionadoBolsin = this.listBolsinesEnviados.stream()
                 .filter(b -> b.getId().equals(idBolsin))

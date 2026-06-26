@@ -72,6 +72,11 @@ public class Bolsin {
         return this.cmOrigen.getNombre();
     }
 
+    public boolean esTuCMOrigenId(Long cmOrigenId) {
+        return this.cmOrigen != null && cmOrigenId != null
+                && this.cmOrigen.getId().equals(cmOrigenId);
+    }
+
     public boolean esTuCMOrigen(ComisionMedica comisionMedica) {
         return this.cmOrigen != null && comisionMedica != null
                 && this.cmOrigen.getId().equals(comisionMedica.getId());

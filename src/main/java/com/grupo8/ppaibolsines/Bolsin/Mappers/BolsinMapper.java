@@ -18,7 +18,7 @@ public class BolsinMapper {
     private final CambioEstadoBolsinMapper cambioEstadoBolsinMapper = new CambioEstadoBolsinMapper();
 
     public BolsinResponse toResponse(Bolsin bolsin) {
-        ComisionMedicaResponse cmOrigen = comisionMedicaMapper.toResponse(bolsin.obtenerCMOrigen());
+        ComisionMedicaResponse cmOrigen = comisionMedicaMapper.toResponse(bolsin.getCmOrigen());
         ComisionMedicaResponse cmDestino = comisionMedicaMapper.toResponse(bolsin.obtenerCMDestino());
 
         return new BolsinResponse(
@@ -28,12 +28,12 @@ public class BolsinMapper {
                 bolsin.getPeso(),
                 cmOrigen,
                 cmDestino,
-                bolsin.getEstadoActual() != null ? bolsin.getEstadoActual().getEstado().getNombre() : null
+                estadoActualNombre(bolsin)
         );
     }
 
     public BolsinDetalleResponse toDetalleResponse(Bolsin bolsin) {
-        ComisionMedicaResponse cmOrigen = comisionMedicaMapper.toResponse(bolsin.obtenerCMOrigen());
+        ComisionMedicaResponse cmOrigen = comisionMedicaMapper.toResponse(bolsin.getCmOrigen());
         ComisionMedicaResponse cmDestino = comisionMedicaMapper.toResponse(bolsin.obtenerCMDestino());
 
         return new BolsinDetalleResponse(
@@ -43,10 +43,18 @@ public class BolsinMapper {
                 bolsin.getPeso(),
                 cmOrigen,
                 cmDestino,
-                bolsin.getEstadoActual() != null ? bolsin.getEstadoActual().getEstado().getNombre() : null,
+                estadoActualNombre(bolsin),
                 bolsin.obtenerInformacionRemito().stream().map(remitoMapper::toResponse).toList(),
                 bolsin.getCambiosEstadoBolsin().stream().map(cambioEstadoBolsinMapper::toResponse).toList()
         );
+    }
+
+    private String estadoActualNombre(Bolsin bolsin) {
+        return bolsin.getCambiosEstadoBolsin().stream()
+                .filter(CambioEstadoBolsin::sosActual)
+                .findFirst()
+                .map(ce -> ce.getEstado().getNombre())
+                .orElse(null);
     }
 
     private LocalDate buscarFechaEnvio(Bolsin bolsin) {

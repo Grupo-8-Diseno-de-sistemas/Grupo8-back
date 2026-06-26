@@ -17,6 +17,10 @@ public interface IGestorRegBolsin {
 
     List<Bolsin> buscarBolsinesConEstadoEnviado();
 
+    List<Bolsin> filtrarPorNroPrecinto(String nroPrecinto);
+
+    List<Bolsin> filtrarPorCmOrigen(Long cmOrigenId);
+
     Bolsin tomarSeleccionBolsin(Long idBolsin);
 
     List<Remito> buscarRemitoBolsin();
