@@ -41,10 +41,10 @@ public class CambioEstadoBolsin {
     }
 
     public boolean sosActual() {
-        return this.fechaHoraFin == null;
+        return this.fechaHoraFin == null; // Si la fechaHoraFin es null, significa que el cambio de estado es actual
     }
 
     public boolean sosEnviado() {
-        return this.sosActual() && this.estado.esEnviado();
+        return this.sosActual() && this.estado.esEnviado(); // Si el cambio de estado es actual y el estado es "Enviado", entonces el bolsín está en estado "Enviado"
     }
 }

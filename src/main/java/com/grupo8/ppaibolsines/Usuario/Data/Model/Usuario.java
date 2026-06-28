@@ -1,5 +1,6 @@
 package com.grupo8.ppaibolsines.Usuario.Data.Model;
 
+import com.grupo8.ppaibolsines.ComisionMedica.Data.Model.ComisionMedica;
 import com.grupo8.ppaibolsines.Empleado.Data.Model.Empleado;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,7 +35,9 @@ public class Usuario {
         this.empleado = empleado;
     }
 
-    public Empleado obtenerEmpleadoLogueado() {
-        return this.empleado;
+    public ComisionMedica obtenerEmpleadoLogueado() {
+        this.empleado.getNombre(); // Obtenemos el nombre y apellido del empleado logueado.
+        this.empleado.getApellido();
+        return this.empleado.esTuCM(); // Obtenemos la CM del empleado logueado desde el empleado.
     }
 }

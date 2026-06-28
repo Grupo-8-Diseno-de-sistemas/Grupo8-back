@@ -98,16 +98,12 @@ public class Documentacion {
     }
 
     public void crearCE(Estado estado, Empleado empleadoResponsable) {
-        CambioEstadoDocumentacion cambioEstado = new CambioEstadoDocumentacion(LocalDateTime.now(), estado, empleadoResponsable);
-        this.cambiosEstadoDocumentacion.add(cambioEstado);
-    }
-
-    public String getDatosDocumentacion() {
-        return this.numero + " - " + this.asunto;
+        CambioEstadoDocumentacion cambioEstado = new CambioEstadoDocumentacion(LocalDateTime.now(), estado, empleadoResponsable); // Crea un nuevo cambio de estado de la documentación con la fecha y hora actual, el estado y el empleado responsable
+        this.cambiosEstadoDocumentacion.add(cambioEstado); // Agrega el cambio de estado a la lista de cambios de estado de la documentación
     }
 
     public String mostrarTipoDocumentacion() {
-        return this.tipoDocumento != null ? this.tipoDocumento.getNombre() : null;
+        return this.tipoDocumento != null ? this.tipoDocumento.getNombre() : null; // Devuelve el nombre del tipo de documentación si existe, de lo contrario devuelve null
     }
 
     public void setEstado(Estado estado) {
@@ -118,8 +114,8 @@ public class Documentacion {
     }
 
     public void asignarEstado(Estado estado, Empleado empleadoResponsable) {
-        getEstadoActual();
-        crearCE(estado, empleadoResponsable);
+        getEstadoActual(); // Metodo disparador para actualizar la fecha de fin del estado actual
+        crearCE(estado, empleadoResponsable); // Crea un nuevo cambio de estado de la documentación con el estado y empleado responsable
     }
 
     public CambioEstadoDocumentacion getEstadoActual() {
@@ -127,8 +123,8 @@ public class Documentacion {
                 .filter(CambioEstadoDocumentacion::sosActual)
                 .findFirst()
                 .orElse(null);
-        if (actual != null) {
-            actual.setFechaHoraFin(LocalDateTime.now());
+        if (actual != null) { // Si se encuentra un cambio de estado actual, se actualiza su fecha de fin con la fecha y hora actual
+            actual.setFechaHoraFin(LocalDateTime.now()); // Actualiza la fecha de fin del estado actual
         }
         return actual;
     }

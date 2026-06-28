@@ -59,50 +59,18 @@ public class Remito {
     }
 
     public void buscarDocumentacion() {
-        for (DetalleRemito dr : this.detalleRemitos) {
-            dr.getDocumentacion();
+        for (DetalleRemito dr : this.detalleRemitos) { // Recorre cada Detalle del Remito
+            dr.getDocumentacion(); // Obtiene la Documentación asociada a ese Detalle
         }
     }
 
-    public boolean estasGenerado() {
-        return this.estado != null;
-    }
-
-    public String getDatosRemito() {
-        return this.numero + " - " + this.fecha;
-    }
-
-    public void modificarDocumentacionIncluida(List<DetalleRemito> detalleRemitos) {
-        this.detalleRemitos = detalleRemitos;
-    }
-
-    public String mostrarInformacionRemito() {
-        return getDatosRemito();
-    }
-
-    public boolean tenesEstaCMDestino(ComisionMedica comisionMedica) {
-        return this.detalleRemitos.stream()
-                .map(DetalleRemito::getAreaCMCDestino)
-                .filter(cm -> cm != null)
-                .anyMatch(cm -> cm.getId().equals(comisionMedica.getId()));
-    }
-
-    public boolean tenesEstaCMOrigen(ComisionMedica comisionMedica) {
-        return this.cmOrigen != null && comisionMedica != null
-                && this.cmOrigen.getId().equals(comisionMedica.getId());
-    }
-
-    public void tomarDocumentacion(DetalleRemito detalleRemito) {
-        this.detalleRemitos.add(detalleRemito);
-    }
-
     public void asignarEstado(Estado estado) {
-        setEstado(estado);
+        setEstado(estado); // Asigna el estado al remito
     }
 
     public void actualizarEstadoDoc(Estado estado, Empleado empleadoResponsable) {
-        for (DetalleRemito detalleRemito : this.detalleRemitos) {
-            detalleRemito.actualizarEstadoDoc(estado, empleadoResponsable);
+        for (DetalleRemito detalleRemito : this.detalleRemitos) { // Recorre cada Detalle del Remito
+            detalleRemito.actualizarEstadoDoc(estado, empleadoResponsable); // Llama al metodo de envoltorio actualizarEstadoDoc() del DetalleRemito para actualizar el estado de la documentación asociada
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.grupo8.ppaibolsines.Sesion.Data.Model;
 
+import com.grupo8.ppaibolsines.ComisionMedica.Data.Model.ComisionMedica;
 import com.grupo8.ppaibolsines.Usuario.Data.Model.Usuario;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class Sesion {
         this.horaInicioSesion = horaInicioSesion;
     }
 
-    public Usuario obtenerUsuarioLogueado() {
-        return this.usuario;
+    public ComisionMedica obtenerUsuarioLogueado() {
+        return this.usuario.obtenerEmpleadoLogueado(); // Obtengo la CM del empleado logueado desde el usuario
     }
 }

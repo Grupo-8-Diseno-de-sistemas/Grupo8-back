@@ -59,17 +59,13 @@ public class Bolsin {
         this.cmDestino = cmDestino;
     }
 
-    public void asociarRemito(Remito remito) {
-        this.remitos.add(remito);
-    }
-
     public void crearCEBolsin(Estado estado, Empleado empleadoResponsable) {
-        CambioEstadoBolsin cambioEstado = new CambioEstadoBolsin(LocalDateTime.now(), estado, empleadoResponsable);
-        this.cambiosEstadoBolsin.add(cambioEstado);
+        CambioEstadoBolsin cambioEstado = new CambioEstadoBolsin(LocalDateTime.now(), estado, empleadoResponsable); // Crea un nuevo cambio de estado del bolsín con la fecha actual, el estado y el empleado responsable
+        this.cambiosEstadoBolsin.add(cambioEstado); // Agrega el cambio de estado a la lista de cambios de estado del bolsín
     }
 
     public String obtenerCMOrigen() {
-        return this.cmOrigen.getNombre();
+        return this.cmOrigen.getNombre(); // Devuelve el nombre de la comisión médica de origen del bolsín
     }
 
     public boolean esTuCMOrigenId(Long cmOrigenId) {
@@ -95,9 +91,9 @@ public class Bolsin {
     }
 
     public List<Remito> obtenerInformacionRemito() {
-        for (Remito remito : this.remitos) {
-            remito.getNumero();
-            remito.buscarDocumentacion();
+        for (Remito remito : this.remitos) { // Recorre la lista de remitos asociados al bolsín
+            remito.getNumero(); // Obtiene el número del remito
+            remito.buscarDocumentacion(); // Llama al metodo buscarDocumentacion() del remito para obtener la documentación asociada
         }
         return this.remitos;
     }
@@ -107,8 +103,8 @@ public class Bolsin {
     }
 
     public boolean sosEnviado() {
-        for (CambioEstadoBolsin ce : this.cambiosEstadoBolsin) {
-            if (ce.sosEnviado()) {
+        for (CambioEstadoBolsin ce : this.cambiosEstadoBolsin) { // Recorre la lista de cambios de estado del bolsín
+            if (ce.sosEnviado()) {  // Si alguno de los cambios de estado indica que el bolsín fue enviado, retorna true
                 return true;
             }
         }
@@ -116,19 +112,19 @@ public class Bolsin {
     }
 
     public void asignarEstado(Estado estado, Empleado empleadoResponsable) {
-        getEstadoActual();
-        crearCEBolsin(estado, empleadoResponsable);
+        getEstadoActual(); // Metodo disparador para actualizar la fecha de fin del estado actual
+        crearCEBolsin(estado, empleadoResponsable); // Crea un nuevo cambio de estado del bolsín con el estado y empleado responsable
     }
 
     public void asignarEstadoARemito(Estado estado) {
-        for (Remito remito : this.remitos) {
-            remito.asignarEstado(estado);
+        for (Remito remito : this.remitos) { // Recorre la lista de remitos asociados al bolsín
+            remito.asignarEstado(estado); // Llama al metodo asignarEstado() del remito para asignarle el estado correspondiente
         }
     }
 
     public void asignarEstadoADocumentacion(Estado estado, Empleado empleadoResponsable) {
-        for (Remito remito : this.remitos) {
-            remito.actualizarEstadoDoc(estado, empleadoResponsable);
+        for (Remito remito : this.remitos) { // Recorre la lista de remitos asociados al bolsín
+            remito.actualizarEstadoDoc(estado, empleadoResponsable); // Llama al metodo de envoltorio actualizarEstadoDoc() del remito para asignarle el estado correspondiente a la documentación asociada
         }
     }
 
@@ -138,13 +134,12 @@ public class Bolsin {
     }
 
     public CambioEstadoBolsin getEstadoActual() {
-        CambioEstadoBolsin actual = this.cambiosEstadoBolsin.stream()
-                .filter(CambioEstadoBolsin::sosActual)
+        CambioEstadoBolsin actual = this.cambiosEstadoBolsin.stream() // Recorre la lista de cambios de estado del bolsín
                 .findFirst()
                 .orElse(null);
-        if (actual != null) {
-            actual.setFechaHoraFin(LocalDateTime.now());
+        if (actual != null) { // Si hay un cambio de estado actual, se actualiza su fecha de fin
+            actual.setFechaHoraFin(LocalDateTime.now()); // Actualiza la fecha de fin del estado actual
         }
-        return actual;
+        return actual; // Retorna el cambio de estado actual del bolsín
     }
 }

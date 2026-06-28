@@ -31,26 +31,15 @@ public class DetalleRemito {
     @ManyToOne
     private Documentacion documentacion;
 
-    public DetalleRemito(ComisionMedica areaCMCDestino, Documentacion documentacion) {
-        this.areaCMCDestino = areaCMCDestino;
-        this.documentacion = documentacion;
-    }
-
-    public void aceptarDocumentacion(Estado estado, Empleado empleadoResponsable) {
-        this.documentacion.aceptar(estado, empleadoResponsable);
-    }
-
     public void actualizarEstadoDoc(Estado estado, Empleado empleadoResponsable) {
-        this.documentacion.asignarEstado(estado, empleadoResponsable);
+        this.documentacion.asignarEstado(estado, empleadoResponsable); // Asignamos el nuevo estado a la documentación
     }
 
     public Documentacion getDocumentacion() {
-        this.documentacion.getAsunto();
-        this.documentacion.mostrarTipoDocumentacion();
+        this.documentacion.getAsunto(); // Obtenemos el asunto de la documentación
+        this.documentacion.mostrarTipoDocumentacion(); // Llamamos al metodo para mostrar el tipo de documentación
         return this.documentacion;
     }
 
-    public String mostrarDocumentacion() {
-        return this.documentacion.getDatosDocumentacion();
-    }
+
 }

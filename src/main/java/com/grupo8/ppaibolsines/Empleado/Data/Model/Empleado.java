@@ -14,7 +14,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "empleado")
@@ -44,21 +43,13 @@ public class Empleado {
         this.comisionMedica = comisionMedica;
     }
 
-    public boolean esTuCM(ComisionMedica comisionMedica) {
-        return this.comisionMedica != null
-                && comisionMedica != null
-                && Objects.equals(this.comisionMedica.getId(), comisionMedica.getId());
+    public ComisionMedica esTuCM() {
+        this.comisionMedica.getNombre(); // Obtenemos el nombre de la CM del empleado logueado.
+        return this.comisionMedica;
     }
 
     public ComisionMedica getCM() {
         return this.comisionMedica;
     }
 
-    public ComisionMedica mostrarCM() {
-        return getCM();
-    }
-
-    public boolean sosGCM() {
-        return perfiles != null && perfiles.contains("GCM");
-    }
 }

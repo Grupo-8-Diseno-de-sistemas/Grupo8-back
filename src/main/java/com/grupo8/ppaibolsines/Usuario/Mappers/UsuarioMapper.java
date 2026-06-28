@@ -11,7 +11,7 @@ public class UsuarioMapper {
     private final ComisionMedicaMapper comisionMedicaMapper = new ComisionMedicaMapper();
 
     public UsuarioResponse toResponse(Usuario usuario) {
-        Empleado empleado = usuario.obtenerEmpleadoLogueado();
+        Empleado empleado = usuario.getEmpleado();
         ComisionMedicaResponse cm = empleado != null && empleado.getCM() != null
                 ? comisionMedicaMapper.toResponse(empleado.getCM())
                 : null;

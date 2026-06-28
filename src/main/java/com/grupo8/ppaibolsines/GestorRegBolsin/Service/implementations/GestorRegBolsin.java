@@ -9,7 +9,6 @@ import com.grupo8.ppaibolsines.Estado.Service.interfaces.IEstadoService;
 import com.grupo8.ppaibolsines.GestorRegBolsin.Service.interfaces.IGestorRegBolsin;
 import com.grupo8.ppaibolsines.Remito.Data.Model.Remito;
 import com.grupo8.ppaibolsines.Sesion.Data.Model.Sesion;
-import com.grupo8.ppaibolsines.Usuario.Data.Model.Usuario;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,22 +39,19 @@ public class GestorRegBolsin implements IGestorRegBolsin {
 
     @Override
     public ComisionMedica buscarCMDeUsuarioLogueado(Sesion sesion) {
-        Usuario usuario = sesion.obtenerUsuarioLogueado();
-        this.empleadoLogueado = usuario.obtenerEmpleadoLogueado();
-        this.cmDeEmpleadoLogueado = this.empleadoLogueado.getCM();
-        this.empleadoLogueado.esTuCM(this.cmDeEmpleadoLogueado);
+        this.cmDeEmpleadoLogueado = sesion.obtenerUsuarioLogueado(); // Obtengo la CM del empleado logueado desde la sesión
         return this.cmDeEmpleadoLogueado;
     }
 
     @Override
-    public List<Bolsin> buscarBolsinesConEstadoEnviado() {
+    public List<Bolsin> buscarBolsinesConEstadoEnviado() { // Obtengo todos los bolsines y filtro por los que tienen estado "Enviado" y cuyo CM destino coincide con el del empleado logueado
         List<Bolsin> todosBolsines = buscar();
         this.listBolsinesEnviados = new ArrayList<>();
-        for (Bolsin bolsin : todosBolsines) {
-            if (bolsin.esTuCMDestino(this.cmDeEmpleadoLogueado) && bolsin.sosEnviado()) {
-                bolsin.obtenerCMOrigen();
-                bolsin.getNroPrecinto();
-                this.listBolsinesEnviados.add(bolsin);
+        for (Bolsin bolsin : todosBolsines) { // Recorro todos los bolsines y filtro por los que tienen estado "Enviado" y cuyo CM destino coincide con el del empleado logueado
+            if (bolsin.esTuCMDestino(this.cmDeEmpleadoLogueado) && bolsin.sosEnviado()) { // Si el bolsín tiene como CM destino la CM del empleado logueado y su estado es "Enviado", lo agrego a la lista de bolsines enviados
+                bolsin.obtenerCMOrigen(); // Metodo para obtener la CM de origen del bolsín
+                bolsin.getNroPrecinto(); // Metodo para obtener el número de precinto del bolsín
+                this.listBolsinesEnviados.add(bolsin); // Agrego el bolsín a la lista de bolsines enviados
             }
         }
         return this.listBolsinesEnviados;
@@ -88,43 +84,43 @@ public class GestorRegBolsin implements IGestorRegBolsin {
     }
 
     @Override
-    public Bolsin tomarSeleccionBolsin(Long idBolsin) {
-        this.seleccionadoBolsin = this.listBolsinesEnviados.stream()
+    public Bolsin tomarSeleccionBolsin(Long idBolsin) { // Tomo el bolsín seleccionado por el usuario a través de su ID
+        this.seleccionadoBolsin = this.listBolsinesEnviados.stream() // Busco el bolsín en la lista de bolsines enviados cuyo ID coincida con el ID del bolsín seleccionado
                 .filter(b -> b.getId().equals(idBolsin))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Bolsín no encontrado en la lista"));
-        return this.seleccionadoBolsin;
+        return this.seleccionadoBolsin; // Retorno el bolsín seleccionado
     }
 
     @Override
-    public List<Remito> buscarRemitoBolsin() {
-        return this.seleccionadoBolsin.obtenerInformacionRemito();
+    public List<Remito> buscarRemitoBolsin() { // Obtengo la información del remito del bolsín seleccionado
+        return this.seleccionadoBolsin.obtenerInformacionRemito(); // Retorno la información del remito del bolsín seleccionado
     }
 
     @Override
-    public void tomarSeleccionOpcRecepcion(int opcion) {
+    public void tomarSeleccionOpcRecepcion(int opcion) { // Tomo la opción de recepción seleccionada por el usuario
         this.seleccionadaOpcionRecepcion = opcion;
     }
 
     @Override
-    public void tomarSeleccionConfirmacion(boolean confirmado) {
+    public void tomarSeleccionConfirmacion(boolean confirmado) { // Tomo la confirmación del Encargado de Bolsines sobre la opción de recepción seleccionada
         if (!confirmado) {
             throw new IllegalStateException("El Encargado de Bolsines no confirmó la opción de recepción seleccionada");
-        }
-        actualizarEstados();
+        } // Flujo alternativo A6: si el Encargado de Bolsines no confirma la seleccion de la opcion de recepecion a registrar.
+        actualizarEstados(); // Actualizo los estados del bolsín, remito y documentación según la opción de recepción seleccionada
     }
 
     @Override
     public void actualizarEstados() {
-        Estado estadoBolsin = buscarEstadoParaAsignarBolsin();
-        this.fechaHoraActual = buscarFechaYHoraActual();
-        asignarEstadoBolsin(estadoBolsin);
+        Estado estadoBolsin = buscarEstadoParaAsignarBolsin(); // Busco el estado de ámbito Bolsin para Recibido en CM Destino
+        this.fechaHoraActual = buscarFechaYHoraActual(); // Obtengo la fecha y hora actual
+        asignarEstadoBolsin(estadoBolsin); // Asigno el estado de ámbito Bolsin para Recibido en CM Destino al bolsín seleccionado
 
         if (this.seleccionadaOpcionRecepcion == 1) {
-            Estado estadoRemito = buscarEstadoParaAsignarRemito();
-            asignarEstadoRemito(estadoRemito);
-            Estado estadoDoc = buscarEstadoParaAsignarDocumentacion();
-            asignarEstadoDocumentacion(estadoDoc);
+            Estado estadoRemito = buscarEstadoParaAsignarRemito(); // Busco el estado de ámbito Remito para Recibido y Aceptado
+            asignarEstadoRemito(estadoRemito); // Metodo de emboltorio para asignar el estado de ámbito Remito para Recibido y Aceptado al remito del bolsín seleccionado
+            Estado estadoDoc = buscarEstadoParaAsignarDocumentacion(); // Busco el estado de ámbito Documentacion para Recibida y Aceptada
+            asignarEstadoDocumentacion(estadoDoc); // Metodo de emboltorio para asignar el estado de ámbito Documentacion para Recibida y Aceptada a la documentación del bolsín seleccionado
         } else if (this.seleccionadaOpcionRecepcion == 2) {
             Estado estadoRemito = buscarEstadoParaAsignarRemitoParcial();
             asignarEstadoRemito(estadoRemito);
@@ -145,8 +141,8 @@ public class GestorRegBolsin implements IGestorRegBolsin {
 
     @Override
     public Estado buscarEstadoParaAsignarBolsin() {
-        for (Estado estado : estadoService.buscarTodos()) {
-            if (estado.esAmbitoBolsin() && estado.esRecibidoEnCMDestino()) {
+        for (Estado estado : estadoService.buscarTodos()) { // Recorro todos los estados y busco el estado de ámbito Bolsin para Recibido en CM Destino
+            if (estado.esAmbitoBolsin() && estado.esRecibidoEnCMDestino()) { // Si el estado es de ámbito Bolsin y es Recibido en CM Destino, lo retorno
                 return estado;
             }
         }
@@ -155,18 +151,18 @@ public class GestorRegBolsin implements IGestorRegBolsin {
 
     @Override
     public LocalDateTime buscarFechaYHoraActual() {
-        return LocalDateTime.now();
+        return LocalDateTime.now(); // Retorno la fecha y hora actual
     }
 
     @Override
     public void asignarEstadoBolsin(Estado estado) {
-        this.seleccionadoBolsin.asignarEstado(estado, this.empleadoLogueado);
+        this.seleccionadoBolsin.asignarEstado(estado, this.empleadoLogueado); // Metodo de la clase Bolsin para asignar el estado de ámbito Bolsin para Recibido en CM Destino al bolsín seleccionado
     }
 
     @Override
     public Estado buscarEstadoParaAsignarRemito() {
-        for (Estado estado : estadoService.buscarTodos()) {
-            if (estado.esAmbitoRemito() && estado.esRecibidoYAceptado()) {
+        for (Estado estado : estadoService.buscarTodos()) { // Recorro todos los estados y busco el estado de ámbito Remito para Recibido y Aceptado
+            if (estado.esAmbitoRemito() && estado.esRecibidoYAceptado()) { // Si el estado es de ámbito Remito y es Recibido y Aceptado, lo retorno
                 return estado;
             }
         }
@@ -175,7 +171,7 @@ public class GestorRegBolsin implements IGestorRegBolsin {
 
     @Override
     public void asignarEstadoRemito(Estado estado) {
-        this.seleccionadoBolsin.asignarEstadoARemito(estado);
+        this.seleccionadoBolsin.asignarEstadoARemito(estado); // Metodo de la clase Bolsin para asignar el estado de ámbito Remito para Recibido y Aceptado al remito del bolsín seleccionado
     }
 
     @Override
@@ -190,8 +186,8 @@ public class GestorRegBolsin implements IGestorRegBolsin {
 
     @Override
     public Estado buscarEstadoParaAsignarDocumentacion() {
-        for (Estado estado : estadoService.buscarTodos()) {
-            if (estado.esAmbitoDocumentacion() && estado.esRecibidaYAceptada()) {
+        for (Estado estado : estadoService.buscarTodos()) { // Recorro todos los estados y busco el estado de ámbito Documentacion para Recibida y Aceptada
+            if (estado.esAmbitoDocumentacion() && estado.esRecibidaYAceptada()) { // Si el estado es de ámbito Documentacion y es Recibida y Aceptada, lo retorno
                 return estado;
             }
         }
@@ -230,16 +226,16 @@ public class GestorRegBolsin implements IGestorRegBolsin {
 
     @Override
     public void asignarEstadoDocumentacion(Estado estado) {
-        this.seleccionadoBolsin.asignarEstadoADocumentacion(estado, this.empleadoLogueado);
+        this.seleccionadoBolsin.asignarEstadoADocumentacion(estado, this.empleadoLogueado); // Metodo de la clase Bolsin para asignar el estado de ámbito Documentacion para Recibida y Aceptada a la documentación del bolsín seleccionado
     }
 
     @Override
     public void llamarCU29() {
-        // CU 29 - Notificar recepción de bolsín: fuera del alcance de esta iteración (flujo básico).
+        // CU 29 - Notificar recepción de bolsín: fuera del alcance de esta iteración.
     }
 
     @Override
-    public void FinCU() {
+    public void FinCU() { // Finalizo el CU y guardo los cambios en la base de datos
         bolsinService.guardar(this.seleccionadoBolsin);
     }
 

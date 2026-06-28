@@ -43,7 +43,7 @@ public class Estado {
     }
 
     public boolean esEnviado() {
-        return "Enviado".equalsIgnoreCase(this.nombre);
+        return "Enviado".equalsIgnoreCase(this.nombre); // Si el nombre del estado es "Enviado", entonces el bolsín está en estado "Enviado"
     }
 
     public boolean esRecibidoEnCMDestino() {
@@ -72,9 +72,5 @@ public class Estado {
 
     public boolean esParaRedirigir() {
         return "Para Redirigir".equalsIgnoreCase(this.nombre);
-    }
-
-    public void serAmbito(String ambito) {
-        this.ambito = ambito;
     }
 }
